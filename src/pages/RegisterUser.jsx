@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import logo from "/logomarca.png";
-import bgImage from "/login-bg.jpg";
+import bgImage from "/img1.jpg";
 import { FaSpinner, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { FloatingLabel, Form } from 'react-bootstrap';
