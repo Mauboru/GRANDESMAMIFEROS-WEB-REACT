@@ -1,23 +1,23 @@
-import { FaWallet, FaRunning, FaTv } from "react-icons/fa";
-import { PiCloverFill } from "react-icons/pi";
-import { FaMoneyBillTransfer } from "react-icons/fa6";
+import { MdAlternateEmail } from "react-icons/md";
+import { TbLayoutDashboardFilled } from "react-icons/tb";
+import { FaUserPlus } from "react-icons/fa";
+import { GiPlantsAndAnimals } from "react-icons/gi";
 
 const menu = [
     {
-        label: "Corridas",
-        path: "/corridas",
-        icon: FaRunning,
+        label: "Dashboards",
+        path: "/dashboards",
+        icon: TbLayoutDashboardFilled,
         subItems: [
-            { label: "Apostas", path: "/corridas/apostas", icon: PiCloverFill },
-            { label: "Transmissões", path: "/corridas/transmissao", icon: FaTv }
+            { label: "Controle de Mamiferos", path: "/dashboards/controle", icon: GiPlantsAndAnimals },
         ]
     },
     {
-        label: "Carteira",
-        path: "/carteira",
-        icon: FaWallet,
+        label: "Pedidos",
+        path: "/pedidos",
+        icon: MdAlternateEmail,
         subItems: [
-            { label: "Saldo", path: "/carteira/saldo", icon: FaMoneyBillTransfer }
+            { label: "Acesso", path: "/pedidos/acesso", icon: FaUserPlus }
         ]
     }
 ];

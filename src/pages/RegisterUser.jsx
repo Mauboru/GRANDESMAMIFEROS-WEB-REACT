@@ -1,28 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import logo from "/logomarca.png";
-import bgImage from "/img1.jpg";
+import img1 from "/img1.jpg";
+import img2 from "/img2.jpg";
+import img3 from "/img3.jpg";
 import { FaSpinner, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { FloatingLabel, Form } from 'react-bootstrap';
+import { FloatingLabel, Form, Modal, Button as BsButton } from 'react-bootstrap';
 import { registerUser } from "../services/auth";
 
-export default function RegisterUser() {
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        phone: "",
-        cpf: "",
-        password: "",
-    });
+const backgroundImages = [img1, img2, img3];
 
+export default function RegisterUser() {
+    const [formData, setFormData] = useState({ name: "", email: "", phone: "", cpf: "", password: "" });
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [mostrarSenha, setMostrarSenha] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [imageIndex, setImageIndex] = useState(0);
     const navigate = useNavigate();
     const isFormIncomplete = Object.entries(formData)
         .filter(([key]) => key !== "phone" && key !== "email")
         .some(([, value]) => !value.trim());
+
+    // Muda imagem do fundo com o tempo
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setImageIndex((prevIndex) => (prevIndex + 1) % backgroundImages.length);
+        }, 5000);
+
+        return () => clearInterval(interval);
+    }, []);
 
     const formatPhone = (value) => {
         const cleaned = value.replace(/\D/g, '').slice(0, 11);
@@ -114,123 +121,224 @@ export default function RegisterUser() {
 
     return (
         <Styled.RegisterPage>
-            <div className="container-fluid h-100">
-                <div className="row min-vh-100">
-                    <Styled.ContentPanel className="col-12 d-flex flex-column justify-content-center align-items-center text-white p-5">
-                        <Styled.FormContainer>
-                            <Styled.LogoContainer>
-                                <Styled.Logo src={logo} alt="RUN SPRINT LIVE" />
-                                <Styled.LogoText>Faça seu Registro!</Styled.LogoText>
-                            </Styled.LogoContainer>
-                            <form className="w-100" style={{ maxWidth: "320px" }} onSubmit={handleSubmit}>
-                                <Styled.CustomFloating as={FloatingLabel} controlId="name" label="Nome" className="mb-3">
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Nome"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                    {errors.name && <Styled.ErrorMsg>{errors.name}</Styled.ErrorMsg>}
-                                </Styled.CustomFloating>
+            <Styled.Container>
+                {/* Painel com imagem rotativa */}
+                <Styled.LeftPanel>
+                    {backgroundImages.map((image, idx) => (
+                        <Styled.FadeBackground key={idx} image={image} visible={idx === imageIndex} />
+                    ))}
+                </Styled.LeftPanel>
+                <Styled.RightPanel>
+                    <Styled.Title>Registre-se!</Styled.Title>
+                    <form className="w-100" style={{ maxWidth: "320px" }} onSubmit={handleSubmit}>
+                        <Styled.CustomFloating as={FloatingLabel} controlId="name" label="Nome" className="mb-3">
+                            <Form.Control
+                                type="text"
+                                placeholder="Nome"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                required
+                            />
+                            {errors.name && <Styled.ErrorMsg>{errors.name}</Styled.ErrorMsg>}
+                        </Styled.CustomFloating>
 
-                                <Styled.CustomFloating as={FloatingLabel} controlId="email" label="Email" className="mb-3">
-                                    <Form.Control
-                                        type="email"
-                                        placeholder="E-mail"
-                                        name="email"
-                                        value={formData.email}
-                                        onChange={handleChange}
-                                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-                                    />
-                                    {errors.email && <Styled.ErrorMsg>{errors.email}</Styled.ErrorMsg>}
-                                </Styled.CustomFloating>
+                        <Styled.CustomFloating as={FloatingLabel} controlId="email" label="Email" className="mb-3">
+                            <Form.Control
+                                type="email"
+                                placeholder="E-mail"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                            />
+                            {errors.email && <Styled.ErrorMsg>{errors.email}</Styled.ErrorMsg>}
+                        </Styled.CustomFloating>
 
-                                <Styled.CustomFloating as={FloatingLabel} controlId="phone" label="Telefone" className="mb-3">
-                                    <Form.Control
-                                        type="tel"
-                                        placeholder="Telefone"
-                                        name="phone"
-                                        value={formData.phone}
-                                        onChange={handlePhoneChange}
-                                    />
-                                    {errors.phone && <Styled.ErrorMsg>{errors.phone}</Styled.ErrorMsg>}
-                                </Styled.CustomFloating>
+                        <Styled.CustomFloating as={FloatingLabel} controlId="phone" label="Telefone" className="mb-3">
+                            <Form.Control
+                                type="tel"
+                                placeholder="Telefone"
+                                name="phone"
+                                value={formData.phone}
+                                onChange={handlePhoneChange}
+                            />
+                            {errors.phone && <Styled.ErrorMsg>{errors.phone}</Styled.ErrorMsg>}
+                        </Styled.CustomFloating>
 
-                                <Styled.CustomFloating as={FloatingLabel} controlId="cpf" label="CPF" className="mb-3">
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="CPF"
-                                        name="cpf"
-                                        value={formData.cpf}
-                                        onChange={handleCpfChange}
-                                        required
-                                    />
-                                    {errors.cpf && <Styled.ErrorMsg>{errors.cpf}</Styled.ErrorMsg>}
-                                </Styled.CustomFloating>
+                        <Styled.CustomFloating as={FloatingLabel} controlId="cpf" label="CPF" className="mb-3">
+                            <Form.Control
+                                type="text"
+                                placeholder="CPF"
+                                name="cpf"
+                                value={formData.cpf}
+                                onChange={handleCpfChange}
+                                required
+                            />
+                            {errors.cpf && <Styled.ErrorMsg>{errors.cpf}</Styled.ErrorMsg>}
+                        </Styled.CustomFloating>
 
-                                <Styled.InputWrapper className="mb-3">
-                                    <Styled.CustomFloating as={FloatingLabel} controlId="password" label="Senha" className="mb-3">
-                                        <Form.Control
-                                            type={mostrarSenha ? "text" : "password"}
-                                            placeholder="Senha"
-                                            name="password"
-                                            value={formData.password}
-                                            onChange={handleChange}
-                                            required
-                                            pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$"
-                                            title="A senha deve ter no mínimo 8 caracteres, incluindo letra, número e caractere especial."
-                                        />
-                                        {errors.password && <Styled.ErrorMsg>{errors.password}</Styled.ErrorMsg>}
-                                    </Styled.CustomFloating>
-                                    <Styled.ToggleSenha
-                                        type="button"
-                                        onClick={() => setMostrarSenha((prev) => !prev)}
-                                    >
-                                        {mostrarSenha ? <FaEyeSlash /> : <FaEye />}
-                                    </Styled.ToggleSenha>
-                                </Styled.InputWrapper>
+                        <Styled.InputWrapper className="mb-3">
+                            <Styled.CustomFloating as={FloatingLabel} controlId="password" label="Senha" className="mb-3">
+                                <Form.Control
+                                    type={mostrarSenha ? "text" : "password"}
+                                    placeholder="Senha"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    required
+                                    pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$"
+                                    title="A senha deve ter no mínimo 8 caracteres, incluindo letra, número e caractere especial."
+                                />
+                                {errors.password && <Styled.ErrorMsg>{errors.password}</Styled.ErrorMsg>}
+                            </Styled.CustomFloating>
+                            <Styled.ToggleSenha
+                                type="button"
+                                onClick={() => setMostrarSenha((prev) => !prev)}
+                            >
+                                {mostrarSenha ? <FaEyeSlash /> : <FaEye />}
+                            </Styled.ToggleSenha>
+                        </Styled.InputWrapper>
 
-                                <Styled.Button type="submit" disabled={loading || isFormIncomplete}>
-                                    {loading ? <><FaSpinner className="spin me-2" /> Criando...</> : "Criar Conta"}
-                                </Styled.Button>
+                        <Styled.Button type="submit" disabled={loading || isFormIncomplete}>
+                            {loading ? <><FaSpinner className="spin me-2" /> Criando...</> : "Criar Conta"}
+                        </Styled.Button>
 
-                                {errors.general && (<Styled.ErrorMsg className="text-center mt-2">{errors.general}</Styled.ErrorMsg>)}
+                        {errors.general && (<Styled.ErrorMsg className="text-center mt-2">{errors.general}</Styled.ErrorMsg>)}
 
-                                <div className="text-center mt-3">
-                                    <Styled.Link href="/">Já tenho uma conta</Styled.Link>
-                                </div>
-                            </form>
-                        </Styled.FormContainer>
-                    </Styled.ContentPanel>
-                </div>
-            </div>
+                        <div className="text-center mt-3">
+                            <Styled.Link href="/">Já tenho uma conta</Styled.Link>
+                        </div>
+                    </form>
+                    {/* Modal de erro */}
+                    <Styled.CustomModal show={showModal} onHide={() => setShowModal(false)} centered>
+                        <Styled.ModalContent>
+                            <h5>Erro ao fazer login</h5>
+                            <p>Verifique seu e-mail/CPF e senha e tente novamente.</p>
+                            <BsButton variant="danger" onClick={() => setShowModal(false)}>
+                                Fechar
+                            </BsButton>
+                        </Styled.ModalContent>
+                    </Styled.CustomModal>
+                </Styled.RightPanel>
+            </Styled.Container>
         </Styled.RegisterPage>
     );
 }
 
 const Styled = {
-    FormContainer: styled.div`
-        background-color: #000;
-        padding: 2rem;
-        border-radius: 12px;
-        box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    Container: styled.div`
+        display: flex;
         width: 100%;
-        max-width: 380px;
+        height: 100vh;
+        overflow: hidden;
+        flex-direction: row;
+    `,
+
+    Title: styled.h1`
+        font-size: 2rem;
+        font-weight: 700;
+        color: ${({ theme }) => theme.colors.primary};
+        margin-bottom: 1.5rem;
+        text-align: center;
+
+        @media (max-width: 768px) {
+            font-size: 1.75rem;
+        }
     `,
 
     RegisterPage: styled.div`
         min-height: 100vh;
     `,
 
-    ContentPanel: styled.div`
-        background: ${({ theme }) => `
+    CustomModal: styled(Modal)`
+        .modal-content {
+            background-color: #1c1c1c;
+            color: white;
+            border-radius: 12px;
+            border: none;
+            padding: 1.5rem;
+        }
+        .modal-header {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .modal-footer {
+            border-top: none;
+            padding-top: 0.5rem;
+            justify-content: center;
+        }
+    `,
+
+    ModalContent: styled.div`
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+
+        h5 {
+            font-size: 1.25rem;
+            color: #ff4d4d;
+            margin-bottom: 0.25rem;
+        }
+
+        p {
+            font-size: 0.95rem;
+            text-align: center;
+            margin: 0;
+            color: #ccc;
+        }
+
+        button {
+            padding: 0.5rem 1.5rem;
+            font-weight: bold;
+            border-radius: 8px;
+        }
+    `,
+
+    FadeBackground: styled.div`
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: ${({ image, theme }) => `
             linear-gradient(${theme.colors.primaryTransparent1}, ${theme.colors.primaryTransparent2}),
-            url(${bgImage}) no-repeat center center
+            url(${image})
         `};
-        background-size: cover;
-        background-blend-mode: darken;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        opacity: ${({ visible }) => (visible ? 1 : 0)};
+        transition: opacity 1.2s ease-in-out;
+        z-index: 1;
+    `,
+
+    LeftPanel: styled.div`
+        flex: 2.8;
+        position: relative;
+        height: 100%;
+        overflow: hidden;
+
+        @media (max-width: 767px) {
+            display: none;
+        }
+    `,
+
+    RightPanel: styled.div`
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: rgb(12, 51, 8);
+        padding: 2rem 1rem;
+        height: 100%;
+
+        @media (min-width: 768px) {
+            max-width: 600px;
+            padding: 3rem 2rem;
+        }
     `,
 
     ToggleSenha: styled.button`
@@ -251,28 +359,6 @@ const Styled = {
 
     InputWrapper: styled.div`
         position: relative;
-    `,
-
-    LogoContainer: styled.div`
-    display: flex;
-    align-items: center; /* Alinha verticalmente */
-    justify-content: center; /* Opcional: centraliza o conjunto (logo + texto) horizontalmente */
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-    `,
-
-    Logo: styled.img`
-        max-height: 50px; /* altura controlada para facilitar o alinhamento */
-    `,
-
-    LogoText: styled.h2`
-        font-size: 1.5rem;
-        color: white;
-        font-weight: bold;
-        line-height: 1; /* ajuda a alinhar com a logo */
-        margin: 0;
-        display: flex;
-        align-items: center; /* se quiser alinhar texto com múltiplas linhas */
     `,
 
     CustomFloating: styled.div`
@@ -300,7 +386,7 @@ const Styled = {
 
     Button: styled.button`
         background-color: ${({ theme }) => theme.colors.primary};
-        color: ${({ theme }) => theme.colors.text};
+        color: #FFF;
         border: none;
         padding: 0.5rem;
         border-radius: 4px;
@@ -314,7 +400,7 @@ const Styled = {
         }
 
         &:disabled {
-            background-color: #555;
+            background-color: ${({ theme }) => theme.colors.primaryDark};
             cursor: not-allowed;
             opacity: 0.6;
         }

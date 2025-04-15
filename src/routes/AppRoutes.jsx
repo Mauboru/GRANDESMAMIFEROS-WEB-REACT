@@ -3,9 +3,8 @@ import Home from "../pages/Home";
 import Login from "../pages/Login";
 import NotFound from "../pages/NotFound";
 import RegisterUser from "../pages/RegisterUser";
-import Saldo from "../pages/carteira/Saldo";
-import Apostas from "../pages/corridas/Apostas";
-import Transmissao from "../pages/corridas/Transmissao";
+import Acesso from "../pages/pedidos/Acesso";
+import Controle from "../pages/dashboards/Controle";
 import PrivateRoute from "./PrivateRoute";
 
 export default function AppRoutes() {
@@ -19,9 +18,8 @@ export default function AppRoutes() {
 
                 {/* Rota protegida */}
                 <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
-                <Route path="/carteira/saldo" element={<PrivateRoute><Saldo /></PrivateRoute>} />
-                <Route path="/corridas/apostas" element={<PrivateRoute><Apostas /></PrivateRoute>} />
-                <Route path="/corridas/transmissao" element={<PrivateRoute><Transmissao /></PrivateRoute>} />
+                <Route path="/dashboards/controle" element={<PrivateRoute><Controle /></PrivateRoute>} />
+                <Route path="/pedidos/acesso" element={<PrivateRoute><Acesso /></PrivateRoute>} />
             </Routes>
         </Router>
     );

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import styled from 'styled-components';
 import logo from "/logomarca.png";
-import img1 from "/img1.jpg"; // Primeira imagem
-import img2 from "/img2.jpg"; // Segunda imagem
-import img3 from "/img3.jpg"; // Terceira imagem
+import img1 from "/img1.jpg";
+import img2 from "/img2.jpg";
+import img3 from "/img3.jpg";
 import { useNavigate } from "react-router-dom";
 import { FaSpinner, FaEye, FaEyeSlash } from "react-icons/fa";
 import { FloatingLabel, Form, Modal, Button as BsButton } from "react-bootstrap";
@@ -25,13 +25,13 @@ export default function Login() {
     if (token) {
       navigate("/home");
     }
-  }, []); 
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setImageIndex((prevIndex) => (prevIndex + 1) % backgroundImages.length);
     }, 5000);
-  
+
     return () => clearInterval(interval);
   }, []);
 
@@ -57,100 +57,93 @@ export default function Login() {
 
   return (
     <Styled.LoginPage>
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
-  {backgroundImages.map((image, idx) => (
-    <Styled.FadeBackground
-      key={idx}
-      image={image}
-      visible={idx === imageIndex}
-    />
-  ))}
-</div>
-      <div className="container-fluid h-100 position-relative">
-        <div className="row min-vh-100 justify-content-center align-items-center">
-          <Styled.LeftPanel className="col-md-8 d-none d-md-flex flex-column justify-content-center align-items-center text-white p-5">
-            {/* A imagem de fundo já é definida por Styled.Background */}
-          </Styled.LeftPanel>
-          
-          {/* Formulário */}
-          <div className="col-12 col-md-4 d-flex justify-content-center">
-            <div className="px-3 w-100">
-              <Styled.RightPanel className="col-12 col-md-4 d-flex flex-column justify-content-center align-items-center text-white">
-                <Styled.Logo
-                  src={logo}
-                  alt="logo"
-                  className="d-block mx-auto mb-4"
-                  style={{ maxWidth: "195px" }}
-                />
+      <Styled.Container>
+        {/* Painel com imagem rotativa */}
+        <Styled.LeftPanel>
+          {backgroundImages.map((image, idx) => (
+            <Styled.FadeBackground key={idx} image={image} visible={idx === imageIndex} />
+          ))}
+        </Styled.LeftPanel>
 
-                <form className="w-100" style={{ maxWidth: "320px" }} onSubmit={handleLogin}>
-                  <Styled.CustomFloating as={FloatingLabel} controlId="emailCpf" label="Email ou CPF" className="mb-3">
-                    <Form.Control
-                      type="text"
-                      placeholder="CPF"
-                      name="emailCpf"
-                      value={emailCpf}
-                      onChange={(e) => setEmailCpf(e.target.value)}
-                      required
-                    />
-                  </Styled.CustomFloating>
+        {/* Painel do formulário */}
+        <Styled.RightPanel>
+          <Styled.LogoWrapper>
+            <Styled.Logo src={logo} alt="logo" />
+          </Styled.LogoWrapper>
 
-                  <div className="mb-3">
-                    <div style={{ position: "relative" }}>
-                      <Styled.CustomFloating as={FloatingLabel} controlId="senha" label="Senha" className="mb-3">
-                        <Form.Control
-                          type={mostrarSenha ? "text" : "password"}
-                          placeholder="Senha"
-                          name="senha"
-                          value={senha}
-                          onChange={(e) => setSenha(e.target.value)}
-                          required
-                        />
-                      </Styled.CustomFloating>
-                      <Styled.ToggleSenha
-                        type="button"
-                        onClick={() => setMostrarSenha((prev) => !prev)}
-                      >
-                        {mostrarSenha ? <FaEyeSlash /> : <FaEye />}
-                      </Styled.ToggleSenha>
-                    </div>
-                  </div>
+          <form className="w-100" style={{ maxWidth: "250px" }} onSubmit={handleLogin}>
+            <Styled.CustomFloating as={FloatingLabel} controlId="emailCpf" label="Email ou CPF" className="mb-3">
+              <Form.Control
+                type="text"
+                placeholder="CPF"
+                name="emailCpf"
+                value={emailCpf}
+                onChange={(e) => setEmailCpf(e.target.value)}
+                required
+              />
+            </Styled.CustomFloating>
 
-                  <div className="text-center mb-3">
-                    <Styled.Link href="#">Esqueci minha senha</Styled.Link>
-                  </div>
-
-                  <hr className="my-4 border-light" />
-
-                  <Styled.Button type="submit" disabled={loading || !emailCpf || !senha}>
-                    {loading ? <><FaSpinner className="spin me-2" /> Entrando...</> : "Login"}
-                  </Styled.Button>
-
-                  <div className="text-center mt-3">
-                    <Styled.Link href="/register">Não tem cadastro? Registre-se aqui!</Styled.Link>
-                  </div>
-                </form>
-
-                {/* Modal de erro */}
-                <Styled.CustomModal show={showModal} onHide={() => setShowModal(false)} centered>
-                  <Styled.ModalContent>
-                    <h5>Erro ao fazer login</h5>
-                    <p>Verifique seu e-mail/CPF e senha e tente novamente.</p>
-                    <BsButton variant="danger" onClick={() => setShowModal(false)}>
-                      Fechar
-                    </BsButton>
-                  </Styled.ModalContent>
-                </Styled.CustomModal>
-              </Styled.RightPanel>
+            <div className="mb-3">
+              <div style={{ position: "relative" }}>
+                <Styled.CustomFloating as={FloatingLabel} controlId="senha" label="Senha" className="mb-3">
+                  <Form.Control
+                    type={mostrarSenha ? "text" : "password"}
+                    placeholder="Senha"
+                    name="senha"
+                    value={senha}
+                    onChange={(e) => setSenha(e.target.value)}
+                    required
+                  />
+                </Styled.CustomFloating>
+                <Styled.ToggleSenha
+                  type="button"
+                  onClick={() => setMostrarSenha((prev) => !prev)}
+                >
+                  {mostrarSenha ? <FaEyeSlash /> : <FaEye />}
+                </Styled.ToggleSenha>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </Styled.LoginPage>
+
+            <div className="text-center mb-3">
+              <Styled.Link href="#">Esqueci minha senha</Styled.Link>
+            </div>
+
+            <hr className="my-4 border-light" />
+
+            <Styled.Button type="submit" disabled={loading || !emailCpf || !senha}>
+              {loading ? <><FaSpinner className="spin me-2" /> Entrando...</> : "Login"}
+            </Styled.Button>
+
+            <div className="text-center mt-3">
+              <Styled.Link href="/register">Não tem cadastro? Registre-se aqui!</Styled.Link>
+            </div>
+          </form>
+
+          {/* Modal de erro */}
+          <Styled.CustomModal show={showModal} onHide={() => setShowModal(false)} centered>
+            <Styled.ModalContent>
+              <h5>Erro ao fazer login</h5>
+              <p>Verifique seu e-mail/CPF e senha e tente novamente.</p>
+              <BsButton variant="danger" onClick={() => setShowModal(false)}>
+                Fechar
+              </BsButton>
+            </Styled.ModalContent>
+          </Styled.CustomModal>
+        </Styled.RightPanel>
+      </Styled.Container>
+    </Styled.LoginPage >
   );
 }
 
 const Styled = {
+  Container: styled.div`
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    flex-direction: row;
+  `,
+
   CustomModal: styled(Modal)`
     .modal-content {
       background-color: #1c1c1c;
@@ -169,21 +162,24 @@ const Styled = {
       justify-content: center;
     }
   `,
+
   FadeBackground: styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  background: ${({ image, theme }) => `
-    linear-gradient(${theme.colors.primaryTransparent1}, ${theme.colors.primaryTransparent2}),
-    url(${image}) no-repeat center center
-  `};
-  background-size: cover;
-  opacity: ${({ visible }) => (visible ? 1 : 0)};
-  transition: opacity 1.2s ease-in-out;
-  z-index: 0;
-`,
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: ${({ image, theme }) => `
+      linear-gradient(${theme.colors.primaryTransparent1}, ${theme.colors.primaryTransparent2}),
+      url(${image})
+    `};
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: ${({ visible }) => (visible ? 1 : 0)};
+    transition: opacity 1.2s ease-in-out;
+    z-index: 1;
+  `,
 
   ModalContent: styled.div`
     display: flex;
@@ -240,37 +236,48 @@ const Styled = {
     }
   `,
 
-  LoginPage: styled.div`
-    min-height: 100vh;
+  LogoWrapper: styled.div`
+    background-color: rgba(255, 255, 255, 0.77);
+    border-radius: 50%;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    margin-bottom: 1rem;
+    width: 180px;
+    height: 180px;
   `,
 
-  Background: styled.div`
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: ${({ bgImage }) => `
-      linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
-      url(${bgImage}) no-repeat center center
-    `};
-    background-size: cover;
-    z-index: 0;
+  LoginPage: styled.div`
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
   `,
 
   LeftPanel: styled.div`
+    flex: 2.8;
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+
+    @media (max-width: 767px) {
+      display: none;
+    }
   `,
 
   RightPanel: styled.div`
-    position: relative;
-    z-index: 1;
-    background-color: rgb(224, 234, 223);
-    border-radius: 12px;
-    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(12, 51, 8);
     padding: 2rem 1rem;
+    height: 100%;
 
     @media (min-width: 768px) {
-      max-width: 400px;
+      max-width: 600px;
       padding: 3rem 2rem;
     }
   `,
@@ -316,7 +323,7 @@ const Styled = {
 
   Button: styled.button`
     background-color: ${({ theme }) => theme.colors.primary};
-    color: ${({ theme }) => theme.colors.text};
+    color: #FFF;
     border: none;
     padding: 0.75rem;
     border-radius: 4px;
@@ -330,7 +337,7 @@ const Styled = {
     }
 
     &:disabled {
-      background-color: #555;
+      background-color: ${({ theme }) => theme.colors.primaryDark};
       cursor: not-allowed;
       opacity: 0.6;
     }
@@ -346,5 +353,4 @@ const Styled = {
       color: ${({ theme }) => theme.colors.primaryDark};
     }
   `,
-
 };
