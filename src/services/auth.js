@@ -2,8 +2,8 @@ import api from "./api";
 
 export const login = (emailCpf, senha) => {
     return api.post("/auth/login", {
-        NOME: emailCpf,
-        SENHA: senha,
+        cpf_or_email: emailCpf,
+        password: senha,
     });
 };
 
