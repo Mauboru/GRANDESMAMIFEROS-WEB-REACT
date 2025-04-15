@@ -10,7 +10,7 @@ export const login = (emailCpf, senha) => {
 export const registerUser = (data) => {
     return api.post("/auth/registerUser", {
         name: data.name,
-        emailOrPhone: data.emailOrPhone,
+        email: data.email,
         cpf: data.cpf,
         password: data.password
     });

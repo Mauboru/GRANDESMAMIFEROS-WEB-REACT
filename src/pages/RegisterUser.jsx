@@ -22,6 +22,10 @@ export default function RegisterUser() {
         .filter(([key]) => key !== "phone" && key !== "email")
         .some(([, value]) => !value.trim());
 
+
+    const cleanCpf = (cpf) => cpf.replace(/\D/g, ''); // Remove tudo que não for número
+    const cleanPhone = (phone) => phone.replace(/\D/g, ''); // Remove tudo que não for número
+
     // Muda imagem do fundo com o tempo
     useEffect(() => {
         const interval = setInterval(() => {
@@ -101,11 +105,16 @@ export default function RegisterUser() {
             return;
         }
 
-        try {
-            console.log(formData);
-            const response = await registerUser(formData);
+        const cleanFormData = {
+            ...formData,
+            cpf: cleanCpf(formData.cpf), // CPF limpo
+            phone: cleanPhone(formData.phone), // Telefone limpo
+        };
 
-            if (response.status === 200) {
+        try {
+            const response = await registerUser(cleanFormData);
+
+            if (response.status === 201) {
                 navigate("/");
             }
         } catch (error) {
@@ -162,6 +171,7 @@ export default function RegisterUser() {
                                 name="phone"
                                 value={formData.phone}
                                 onChange={handlePhoneChange}
+                                disabled
                             />
                             {errors.phone && <Styled.ErrorMsg>{errors.phone}</Styled.ErrorMsg>}
                         </Styled.CustomFloating>
