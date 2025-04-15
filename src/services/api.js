@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-    // baseURL: "http://212.85.19.3:3001",
-    baseURL: "https://fw.infotech-solucoes.com/api",
+    baseURL: "http://212.85.19.3:3003",
+    // baseURL: "https://fw.infotech-solucoes.com/api",
 });
 
 api.interceptors.request.use(config => {
