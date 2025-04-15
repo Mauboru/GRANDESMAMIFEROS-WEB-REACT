@@ -227,17 +227,10 @@ const Styled = {
     max-width: 175px;
     display: block;
     margin: 0 auto 1rem auto;
-    transform: rotate(-2deg);
-    animation: shake 3s infinite;
-
-    @keyframes shake {
-      0%, 100% { transform: rotate(-2deg) translateX(0); }
-      50% { transform: rotate(-2deg) translateX(3px); }
-    }
   `,
 
   LogoWrapper: styled.div`
-    background-color: rgba(255, 255, 255, 0.77);
+    background-color: rgb(255, 255, 255);
     border-radius: 50%;
     padding: 1.5rem;
     display: flex;
