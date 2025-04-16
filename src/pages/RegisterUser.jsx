@@ -118,10 +118,10 @@ export default function RegisterUser() {
                 navigate("/");
             }
         } catch (error) {
-            if (error.response?.data?.errors) {
+            if (error.response && error.response.data && error.response.data.errors) {
                 setErrors(error.response.data.errors);
             } else {
-                setErrors({ general: "Erro ao criar conta. Tente novamente." });
+                setErrors({ general: 'Erro inesperado ao tentar registrar. Tente novamente mais tarde.' });
             }
         } finally {
             setLoading(false);
