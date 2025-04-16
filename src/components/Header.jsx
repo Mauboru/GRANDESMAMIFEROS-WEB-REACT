@@ -13,7 +13,8 @@ export default function Header({ onToggleSidebar }) {
   useEffect(() => {
     const storedUser = localStorage.getItem("dataUser");
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser); 
+      setUser(parsedUser.user); 
     }
   }, []);
 
