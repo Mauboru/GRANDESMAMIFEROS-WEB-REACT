@@ -1,65 +1,66 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MainLayout from "../../layouts/MainLayout";
 import styled from "styled-components";
 import { Button, Card } from "react-bootstrap";
-
-const mockRequests = [
-    {
-        id: 1,
-        name: "João Silva",
-        email: "joao@email.com",
-        phone: "(11) 91234-5678",
-        cpf: "123.456.789-00",
-        status: "pendente",
-    },
-    {
-        id: 2,
-        name: "Maria Oliveira",
-        email: "maria@email.com",
-        phone: "(21) 99876-5432",
-        cpf: "987.654.321-00",
-        status: "pendente",
-    },
-    {
-        id: 3,
-        name: "Carlos Souza",
-        email: "carlos@email.com",
-        phone: "(31) 91111-2222",
-        cpf: "111.222.333-44",
-        status: "pendente",
-    },
-];
+import { getUsers, setUserActive, setUserInactive } from "../../services/profile";
+import { FaEdit } from "react-icons/fa";
 
 export default function Acesso() {
-    const [requests, setRequests] = useState(mockRequests);
+    const [requests, setRequests] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [editingStatus, setEditingStatus] = useState(null);
+    const [editingId, setEditingId] = useState(null);
 
-    const handleAprovar = (id) => {
-        setRequests((prev) =>
-            prev.map((req) =>
-                req.id === id ? { ...req, status: "liberado" } : req
-            )
-        );
+    const fetchRequests = async () => {
+        setLoading(true);
+        try {
+            const response = await getUsers();
+            setRequests(response.data.users || []);
+        } catch (error) {
+            console.error("Erro ao buscar solicitações:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const handleCancelar = (id) => {
-        setRequests((prev) =>
-            prev.map((req) =>
-                req.id === id ? { ...req, status: "cancelado" } : req
-            )
-        );
+    useEffect(() => {
+        fetchRequests();
+    }, []);
+
+    const handleEditStatus = (id, currentStatus) => {
+        if (editingId === id) {
+            setEditingId(null);
+        } else {
+            setEditingStatus(currentStatus);
+            setEditingId(id);
+        }
+    };
+
+    const handleSaveStatus = async (id, newStatus) => {
+        try {
+            if (newStatus === 'active') {
+                await setUserActive(id);
+            } else if (newStatus === 'inactive') {
+                await setUserInactive(id);
+            }
+            fetchRequests();
+            setEditingId(null);
+        } catch (error) {
+            console.error("Erro ao atualizar status:", error);
+        }
     };
 
     return (
         <MainLayout>
             <h2 className="mb-4">Solicitações de Acesso</h2>
             <Styled.Container>
+                {requests.length === 0 && !loading && <p>Nenhuma solicitação pendente.</p>}
                 {requests.map((user) => (
                     <Styled.StyledCard key={user.id} border="dark">
                         <Card.Body>
                             <Card.Title>{user.name}</Card.Title>
                             <Card.Text>
                                 <strong>Email:</strong> {user.email}<br />
-                                <strong>Telefone:</strong> {user.phone}<br />
                                 <strong>CPF:</strong> {user.cpf}<br />
                                 <strong>Status:</strong>{" "}
                                 <Styled.Status status={user.status}>
@@ -67,22 +68,43 @@ export default function Acesso() {
                                 </Styled.Status>
                             </Card.Text>
 
-                            {user.status === "pendente" && (
-                                <div className="d-flex gap-2">
-                                    <Button
-                                        variant="success"
-                                        onClick={() => handleAprovar(user.id)}
-                                    >
-                                        Liberar Acesso
-                                    </Button>
-                                    <Button
-                                        variant="danger"
-                                        onClick={() => handleCancelar(user.id)}
-                                    >
-                                        Cancelar
-                                    </Button>
+                            {/* Adiciona o botão de editar */}
+                            <div className="d-flex justify-content-end mt-2">
+                                {/* Mostrar botões de editar status se o card for o selecionado para edição */}
+                                <div className="d-flex gap-4">
+                                    {editingId === user.id && (
+                                        <>
+                                            <Button
+                                                variant="success"
+                                                onClick={() => handleSaveStatus(user.id, 'active')}
+                                                className="mt-3"
+                                            >
+                                                Ativar
+                                            </Button>
+
+                                            <Button
+                                                variant="danger"
+                                                onClick={() => handleSaveStatus(user.id, 'inactive')}
+                                                className="mt-3"
+                                            >
+                                                Desativar
+                                            </Button>
+                                        </>
+                                    )}
+
+                                    {/* Botão de editar */}
+                                    <div className="mt-3">
+                                        <Button
+                                            variant="info"
+                                            onClick={() => handleEditStatus(user.id, user.status)}
+                                        >
+                                            <FaEdit />
+                                        </Button>
+                                    </div>
                                 </div>
-                            )}
+                            </div>
+
+
                         </Card.Body>
                     </Styled.StyledCard>
                 ))}
@@ -109,8 +131,9 @@ const Styled = {
 
     Status: styled.span`
         color: ${({ status }) =>
-            status === "liberado" ? "#4caf50" :
-                status === "cancelado" ? "#f44336" : "#ffc107"};
+            status === "active" ? "#4caf50" :
+                status === "inactive" ? "#f44336" :
+                    status === "pending" ? "#ffc107" : "#fff"};
         font-weight: bold;
         text-transform: capitalize;
     `,

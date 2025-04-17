@@ -18,6 +18,7 @@ export default function Login() {
   const [showModal, setShowModal] = useState(false);
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
+  const [erroLogin, setErroLogin] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,9 +47,12 @@ export default function Login() {
         localStorage.setItem("dataUser", JSON.stringify(response.data));
         navigate("/home");
       } else {
+        setErroLogin("Erro desconhecido.");
         setShowModal(true);
       }
     } catch (error) {
+      const mensagemErro = error?.response?.data?.message || "Erro ao conectar com o servidor.";
+      setErroLogin(mensagemErro);
       setShowModal(true);
     } finally {
       setLoading(false);
@@ -123,7 +127,7 @@ export default function Login() {
           <Styled.CustomModal show={showModal} onHide={() => setShowModal(false)} centered>
             <Styled.ModalContent>
               <h5>Erro ao fazer login</h5>
-              <p>Verifique seu e-mail/CPF e senha e tente novamente.</p>
+              <p>{erroLogin}</p>
               <BsButton variant="danger" onClick={() => setShowModal(false)}>
                 Fechar
               </BsButton>
