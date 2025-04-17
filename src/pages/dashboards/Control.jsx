@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import MainLayout from '../../layouts/MainLayout';
 import { useNavigate } from 'react-router-dom';
 
-export default function Controle() {
+export default function Control() {
   const [loading, setLoading] = useState(true);
   const [iframeSrc, setIframeSrc] = useState(''); 
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ export default function Controle() {
     <MainLayout>
       <IframeContainer>
         <iframe
-          src={iframeSrc}
+          src={'https://app.powerbi.com/view?r=eyJrIjoiMTIzNjA0ZDAtZjQ1MC00NmQ4LTk5ZWYtN2Q2Y2ZjOTRhYmJkIiwidCI6IjBlMzkyZmY3LTU5ZjktNGE0OS04NTZmLTdkM2I4YWM4YTUxYSJ9'}
           title="Dashboard"
           frameBorder="0"
           allowFullScreen

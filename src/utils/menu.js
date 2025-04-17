@@ -9,17 +9,24 @@ const menu = [
         path: "/dashboards",
         icon: TbLayoutDashboardFilled,
         subItems: [
-            { label: "Controle de Mamiferos", path: "/dashboards/controle", icon: GiPlantsAndAnimals },
+            { label: "Controle de Mamiferos", path: "/dashboards/control", icon: GiPlantsAndAnimals },
         ]
     },
     {
         label: "Pedidos",
-        path: "/pedidos",
+        path: "/orders",
         icon: MdAlternateEmail,
         subItems: [
-            { label: "Acesso", path: "/pedidos/acesso", icon: FaUserPlus }
+            { label: "Acessos", path: "/orders/acess", icon: FaUserPlus }
         ]
     }
 ];
+
+export const getMenuByRole = (role) => {
+    return menu.filter(item => {
+        if (item.label === "Pedidos" && role !== "manager") return false;
+        return true;
+    });
+};
 
 export default menu;

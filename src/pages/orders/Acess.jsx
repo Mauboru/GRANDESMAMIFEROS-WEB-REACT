@@ -5,11 +5,12 @@ import { Button, Card } from "react-bootstrap";
 import { getUsers, setUserActive, setUserInactive } from "../../services/profile";
 import { FaEdit } from "react-icons/fa";
 
-export default function Acesso() {
+export default function Acess() {
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(false);
     const [editingStatus, setEditingStatus] = useState(null);
     const [editingId, setEditingId] = useState(null);
+    const [loadingId, setLoadingId] = useState(null);
 
     const fetchRequests = async () => {
         setLoading(true);
@@ -37,6 +38,7 @@ export default function Acesso() {
     };
 
     const handleSaveStatus = async (id, newStatus) => {
+        setLoadingId(id);
         try {
             if (newStatus === 'active') {
                 await setUserActive(id);
@@ -47,16 +49,24 @@ export default function Acesso() {
             setEditingId(null);
         } catch (error) {
             console.error("Erro ao atualizar status:", error);
+        } finally {
+            setLoadingId(null);
         }
     };
 
     return (
         <MainLayout>
-            <h2 className="mb-4">Solicitações de Acesso</h2>
+            <h2 className="mb-4">Solicitações de Acess</h2>
             <Styled.Container>
                 {requests.length === 0 && !loading && <p>Nenhuma solicitação pendente.</p>}
                 {requests.map((user) => (
                     <Styled.StyledCard key={user.id} border="dark">
+                        {loadingId === user.id && (
+                            <>
+                                <Styled.Overlay />
+                                <Styled.Spinner />
+                            </>
+                        )}
                         <Card.Body>
                             <Card.Title>{user.name}</Card.Title>
                             <Card.Text>
@@ -136,5 +146,46 @@ const Styled = {
                     status === "pending" ? "#ffc107" : "#fff"};
         font-weight: bold;
         text-transform: capitalize;
+    `,
+
+    Overlay: styled.div`
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 2;
+        border-radius: 12px;
+    `,
+
+    Spinner: styled.div`
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 4px solid rgba(255, 255, 255, 0.2);
+        border-top: 4px solid #fff;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        animation: spin 1s linear infinite;
+        z-index: 3;
+
+        @keyframes spin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+    `,
+
+    StyledCard: styled(Card)`
+        position: relative;
+        background-color: #1c1c1c;
+        color: #fff;
+        border-radius: 12px;
+        border: 1px solid #444;
+        padding: 1rem;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
     `,
 };

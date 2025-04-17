@@ -2,17 +2,23 @@ import { useLocation, Link } from "react-router-dom";
 import styled, { useTheme } from "styled-components";
 import LogoImage from "/logomarca.png";
 import { useState, useEffect } from "react";
-import menu from "../utils/menu";
+import { getMenuByRole } from "../utils/menu";
 import { FaChevronRight, FaChevronDown } from "react-icons/fa";
 
 export default function Sidebar({ isOpen, onClose }) {
   const theme = useTheme();
   const location = useLocation();
   const [expandedMenu, setExpandedMenu] = useState(null);
+  const [menuItems, setMenuItems] = useState([]);
   const currentPath = location.pathname;
 
   useEffect(() => {
-    const activeMenu = menu.find(item =>
+    const user = JSON.parse(localStorage.getItem("dataUser"));
+    const role = user.user.role;
+    const filteredMenu = getMenuByRole(role);
+    setMenuItems(filteredMenu);
+
+    const activeMenu = filteredMenu.find(item =>
       item.subItems?.some(sub => sub.path === currentPath)
     );
     if (activeMenu) {
@@ -33,7 +39,7 @@ export default function Sidebar({ isOpen, onClose }) {
         </LogoWrapper>
         <ul>
           {
-            menu.map((item) => {
+            menuItems.map((item) => {
               const Icon = item.icon;
               return (
                 <div key={item.path}>
