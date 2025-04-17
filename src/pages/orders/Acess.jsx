@@ -56,7 +56,7 @@ export default function Acess() {
 
     return (
         <MainLayout>
-            <h2 className="mb-4">Solicitações de Acess</h2>
+            <h2 className="mb-4">Solicitações de Acesso</h2>
             <Styled.Container>
                 {requests.length === 0 && !loading && <p>Nenhuma solicitação pendente.</p>}
                 {requests.map((user) => (
