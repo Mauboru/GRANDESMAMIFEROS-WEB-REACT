@@ -84,13 +84,6 @@ export default function Sidebar({ isOpen, onClose }) {
   );
 }
 
-const StyledLink = styled(Link)`
-  color: ${({ selected, theme }) => (selected ? theme.colors.primary : "#fff")};
-  text-decoration: none;
-  display: block;
-  width: 100%;
-  height: 100%;
-`;
 
 const SidebarContainer = styled.aside`
   width: 240px;
@@ -159,7 +152,7 @@ const LogoWrapper = styled.div`
   margin-bottom: 2rem;
 
   img {
-    max-width: 120px;
+    max-width: 175px;
     height: auto;
   }
 `;

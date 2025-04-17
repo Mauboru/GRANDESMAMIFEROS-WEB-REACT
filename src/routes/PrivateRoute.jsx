@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 
 export default function PrivateRoute({ children, requiredRole }) {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true); 
     const token = localStorage.getItem("token");
 
     useEffect(() => {
@@ -11,7 +12,10 @@ export default function PrivateRoute({ children, requiredRole }) {
             const parsedUser = JSON.parse(storedUser);
             setUser(parsedUser.user);
         }
+        setLoading(false);
     }, []);
+
+    if (loading) return null;
 
     const role = user?.role;
 

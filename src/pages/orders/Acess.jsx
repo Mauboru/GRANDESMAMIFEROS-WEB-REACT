@@ -129,16 +129,7 @@ const Styled = {
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 1rem;
     `,
-
-    StyledCard: styled(Card)`
-        background-color: #1c1c1c;
-        color: #fff;
-        border-radius: 12px;
-        border: 1px solid #444;
-        padding: 1rem;
-        box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    `,
-
+    
     Status: styled.span`
         color: ${({ status }) =>
             status === "active" ? "#4caf50" :

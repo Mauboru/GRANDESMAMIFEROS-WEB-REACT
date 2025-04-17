@@ -71,9 +71,7 @@ export default function Login() {
 
         {/* Painel do formulário */}
         <Styled.RightPanel>
-          <Styled.LogoWrapper>
-            <Styled.Logo src={logo} alt="logo" />
-          </Styled.LogoWrapper>
+          <Styled.Logo src={logo} alt="logo" />
 
           <form className="w-100" style={{ maxWidth: "250px" }} onSubmit={handleLogin}>
             <Styled.CustomFloating as={FloatingLabel} controlId="emailCpf" label="Email ou CPF" className="mb-3">
@@ -228,22 +226,9 @@ const Styled = {
   `,
 
   Logo: styled.img`
-    max-width: 175px;
+    max-width: 265px;
     display: block;
     margin: 0 auto 1rem auto;
-  `,
-
-  LogoWrapper: styled.div`
-    background-color: rgb(255, 255, 255);
-    border-radius: 50%;
-    padding: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    margin-bottom: 1rem;
-    width: 180px;
-    height: 180px;
   `,
 
   LoginPage: styled.div`
