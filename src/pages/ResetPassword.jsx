@@ -4,29 +4,20 @@ import logo from "/logomarca.png";
 import img1 from "/img1.jpg";
 import img2 from "/img2.jpg";
 import img3 from "/img3.jpg";
-import { useNavigate } from "react-router-dom";
 import { FaSpinner, FaEye, FaEyeSlash } from "react-icons/fa";
 import { FloatingLabel, Form, Modal, Button as BsButton } from "react-bootstrap";
-import { login } from "../services/auth";
+import { sendEmailReset } from "../services/auth";
+import CustomModal from "../components/CustomModal"; 
+import { useNavigate } from "react-router-dom";
 
 const backgroundImages = [img1, img2, img3];
 
-export default function Login() {
+export default function ResetPassword() {
   const [loading, setLoading] = useState(false);
-  const [emailCpf, setEmailCpf] = useState("");
-  const [senha, setSenha] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [email, setEmail] = useState("");
   const [imageIndex, setImageIndex] = useState(0);
-  const [erroLogin, setErroLogin] = useState("");
+  const [modal, setModal] = useState({ show: false, type: "info", message: "" });
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      navigate("/home");
-    }
-  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -36,31 +27,33 @@ export default function Login() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleLogin = async (e) => {
+  const handleSendEmailPasswordReset = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await login(emailCpf, senha);
+      const response = await sendEmailReset(email);
 
-      if (response.status === 200) {
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("dataUser", JSON.stringify(response.data));
-        navigate("/home");
-      } else {
-        setErroLogin("Erro desconhecido.");
-        setShowModal(true);
+      if (response.status === 201) {
+        setModal({
+            show: true,
+            type: "success",
+            message: "Email enviado com sucesso! Verifique sua caixa de entrada.",
+          });
       }
     } catch (error) {
-      const mensagemErro = error?.response?.data?.message || "Erro ao conectar com o servidor.";
-      setErroLogin(mensagemErro);
-      setShowModal(true);
+        const mensagemErro = error?.response?.data?.message || "Erro ao conectar com o servidor.";
+        setModal({
+          show: true,
+          type: "error",
+          message: mensagemErro,
+        });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Styled.LoginPage>
+    <Styled.ResetPage>
       <Styled.Container>
         {/* Painel com imagem rotativa */}
         <Styled.LeftPanel>
@@ -73,67 +66,37 @@ export default function Login() {
         <Styled.RightPanel>
           <Styled.Logo src={logo} alt="logo" />
 
-          <form className="w-100" style={{ maxWidth: "250px" }} onSubmit={handleLogin}>
-            <Styled.CustomFloating as={FloatingLabel} controlId="emailCpf" label="Email ou CPF" className="mb-3">
+          <form className="w-100" style={{ maxWidth: "250px" }} onSubmit={handleSendEmailPasswordReset}>
+            <Styled.CustomFloating as={FloatingLabel} controlId="email" label="Email" className="mb-3">
               <Form.Control
                 type="text"
-                placeholder="CPF"
-                name="emailCpf"
-                value={emailCpf}
-                onChange={(e) => setEmailCpf(e.target.value)}
+                placeholder="Insira seu Email"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </Styled.CustomFloating>
 
-            <div className="mb-3">
-              <div style={{ position: "relative" }}>
-                <Styled.CustomFloating as={FloatingLabel} controlId="senha" label="Senha" className="mb-3">
-                  <Form.Control
-                    type={mostrarSenha ? "text" : "password"}
-                    placeholder="Senha"
-                    name="senha"
-                    value={senha}
-                    onChange={(e) => setSenha(e.target.value)}
-                    required
-                  />
-                </Styled.CustomFloating>
-                <Styled.ToggleSenha
-                  type="button"
-                  onClick={() => setMostrarSenha((prev) => !prev)}
-                >
-                  {mostrarSenha ? <FaEyeSlash /> : <FaEye />}
-                </Styled.ToggleSenha>
-              </div>
-            </div>
-
-            <div className="text-center mb-3">
-              <Styled.Link href="/reset-password">Esqueci minha senha</Styled.Link>
-            </div>
-
             <hr className="my-4 border-light" />
 
-            <Styled.Button type="submit" disabled={loading || !emailCpf || !senha}>
-              {loading ? <><FaSpinner className="spin me-2" /> Entrando...</> : "Login"}
+            <Styled.Button type="submit" disabled={loading || !email}>
+              {loading ? <><FaSpinner className="spin me-2" /> Entrando...</> : "Enviar"}
             </Styled.Button>
 
             <div className="text-center mt-3">
-              <Styled.Link href="/register">Não tem cadastro? Registre-se aqui!</Styled.Link>
+              <Styled.Link href="/">Voltar para o Login!</Styled.Link>
             </div>
           </form>
-
-          {/* Modal de erro */}
-          <Styled.CustomModal show={showModal} onHide={() => setShowModal(false)} centered>
-            <Styled.ModalContent>
-              <h5>Erro ao fazer login</h5>
-              <p>{erroLogin}</p>
-              <BsButton variant="danger" onClick={() => setShowModal(false)}>
-                Fechar
-              </BsButton>
-            </Styled.ModalContent>
-          </Styled.CustomModal>
         </Styled.RightPanel>
       </Styled.Container>
-    </Styled.LoginPage >
+      <CustomModal
+        show={modal.show}
+        type={modal.type}
+        message={modal.message}
+        onHide={() => setModal({ ...modal, show: false })}
+        />
+    </Styled.ResetPage >
   );
 }
 
@@ -144,25 +107,6 @@ const Styled = {
     height: 100vh;
     overflow: hidden;
     flex-direction: row;
-  `,
-
-  CustomModal: styled(Modal)`
-    .modal-content {
-      background-color: #1c1c1c;
-      color: white;
-      border-radius: 12px;
-      border: none;
-      padding: 1.5rem;
-    }
-    .modal-header {
-      border-bottom: none;
-      padding-bottom: 0;
-    }
-    .modal-footer {
-      border-top: none;
-      padding-top: 0.5rem;
-      justify-content: center;
-    }
   `,
 
   FadeBackground: styled.div`
@@ -183,55 +127,13 @@ const Styled = {
     z-index: 1;
   `,
 
-  ModalContent: styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-
-    h5 {
-      font-size: 1.25rem;
-      color: #ff4d4d;
-      margin-bottom: 0.25rem;
-    }
-
-    p {
-      font-size: 0.95rem;
-      text-align: center;
-      margin: 0;
-      color: #ccc;
-    }
-
-    button {
-      padding: 0.5rem 1.5rem;
-      font-weight: bold;
-      border-radius: 8px;
-    }
-  `,
-
-  ToggleSenha: styled.button`
-    position: absolute;
-    top: 50%;
-    right: 12px;
-    transform: translateY(-50%);
-    background: transparent;
-    border: none;
-    color: ${({ theme }) => theme.colors.placeholder};
-    font-size: 1.2rem;
-    cursor: pointer;
-
-    &:hover {
-      color: ${({ theme }) => theme.colors.primary};
-    }
-  `,
-
   Logo: styled.img`
     max-width: 265px;
     display: block;
     margin: 0 auto 1rem auto;
   `,
 
-  LoginPage: styled.div`
+  ResetPage: styled.div`
   width: 100%;
   height: 100vh;
   overflow: hidden;

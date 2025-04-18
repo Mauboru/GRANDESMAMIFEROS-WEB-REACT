@@ -15,3 +15,9 @@ export const registerUser = (data) => {
         password: data.password
     });
 };
+
+export const sendEmailReset = (email) => {
+    return api.post("/auth/sendEmailReset", {
+        email: email,
+    });
+};
