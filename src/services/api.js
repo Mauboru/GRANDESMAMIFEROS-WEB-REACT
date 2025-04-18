@@ -3,26 +3,40 @@ import axios from "axios";
 const primaryURL = "http://localhost:3003";
 const fallbackURL = "http://212.85.19.3:3003";
 
-const api = axios.create();
+const api = axios.create({
+  baseURL: primaryURL,
+});
 
-export const requestWithFallback = async (config) => {
-  try {
-    return await api({ ...config, baseURL: primaryURL });
-  } catch (err) {
-    if (err.code === "ECONNREFUSED" || err.code === "ERR_NETWORK") {
-      return await api({ ...config, baseURL: fallbackURL });
+// Armazena se já tentou fallback (para não entrar em loop)
+let triedFallback = false;
+
+// Interceptador de erros para fazer fallback
+api.interceptors.response.use(
+  response => response,
+  async error => {
+    // Se já tentou o fallback, não tenta de novo
+    if (!triedFallback &&
+        (error.code === "ECONNREFUSED" || error.code === "ERR_NETWORK" || error.message.includes("Network Error"))) {
+      triedFallback = true;
+      // Atualiza baseURL para o fallback
+      api.defaults.baseURL = fallbackURL;
+      // Reenvia a requisição com nova baseURL
+      return api(error.config);
     }
-    throw err;
+
+    // Resetar fallback para próximas chamadas novas
+    triedFallback = false;
+    return Promise.reject(error);
   }
-};
+);
 
-
-// api.interceptors.request.use(config => {
-//     const token = localStorage.getItem("token");
-//     if (token) {
-//         config.headers.Authorization = `Bearer ${token}`;
-//     }
-//     return config;
-// });
+// Interceptador para autenticação (opcional)
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 export default api;
