@@ -22,7 +22,6 @@ export default function RegisterUser() {
         .filter(([key]) => key !== "phone" && key !== "email")
         .some(([, value]) => !value.trim());
 
-
     const cleanCpf = (cpf) => cpf.replace(/\D/g, ''); // Remove tudo que não for número
     const cleanPhone = (phone) => phone.replace(/\D/g, ''); // Remove tudo que não for número
 

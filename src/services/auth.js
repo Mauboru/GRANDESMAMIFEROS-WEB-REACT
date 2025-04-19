@@ -21,3 +21,9 @@ export const sendEmailReset = (email) => {
         email: email,
     });
 };
+
+export const sendNewPassword = (password) => {
+    return api.post("/auth/sendNewPassword", {
+        new_password: password,
+    }, { headers: { 'Authorization': `Bearer ${token}` } });
+};

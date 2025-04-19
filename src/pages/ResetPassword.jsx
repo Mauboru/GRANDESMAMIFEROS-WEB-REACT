@@ -7,7 +7,7 @@ import img3 from "/img3.jpg";
 import { FaSpinner, FaEye, FaEyeSlash } from "react-icons/fa";
 import { FloatingLabel, Form, Modal, Button as BsButton } from "react-bootstrap";
 import { sendEmailReset } from "../services/auth";
-import CustomModal from "../components/CustomModal"; 
+import CustomModal from "../components/CustomModal";
 import { useNavigate } from "react-router-dom";
 
 const backgroundImages = [img1, img2, img3];
@@ -35,18 +35,18 @@ export default function ResetPassword() {
 
       if (response.status === 201) {
         setModal({
-            show: true,
-            type: "success",
-            message: "Email enviado com sucesso! Verifique sua caixa de entrada.",
-          });
+          show: true,
+          type: "success",
+          message: "Email enviado com sucesso! Verifique sua caixa de entrada.",
+        });
       }
     } catch (error) {
-        const mensagemErro = error?.response?.data?.message || "Erro ao conectar com o servidor.";
-        setModal({
-          show: true,
-          type: "error",
-          message: mensagemErro,
-        });
+      const mensagemErro = error?.response?.data?.message || "Erro ao conectar com o servidor.";
+      setModal({
+        show: true,
+        type: "error",
+        message: mensagemErro,
+      });
     } finally {
       setLoading(false);
     }
@@ -95,7 +95,7 @@ export default function ResetPassword() {
         type={modal.type}
         message={modal.message}
         onHide={() => setModal({ ...modal, show: false })}
-        />
+      />
     </Styled.ResetPage >
   );
 }

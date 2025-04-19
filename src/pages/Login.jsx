@@ -7,7 +7,8 @@ import img3 from "/img3.jpg";
 import { useNavigate } from "react-router-dom";
 import { FaSpinner, FaEye, FaEyeSlash } from "react-icons/fa";
 import { FloatingLabel, Form, Modal, Button as BsButton } from "react-bootstrap";
-import { login } from "../services/auth";
+import { login } from "../services/auth"; import
+CustomModal from "../components/CustomModal";
 
 const backgroundImages = [img1, img2, img3];
 
@@ -15,10 +16,9 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [emailCpf, setEmailCpf] = useState("");
   const [senha, setSenha] = useState("");
-  const [showModal, setShowModal] = useState(false);
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
-  const [erroLogin, setErroLogin] = useState("");
+  const [modal, setModal] = useState({ show: false, type: "info", message: "" });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,13 +47,19 @@ export default function Login() {
         localStorage.setItem("dataUser", JSON.stringify(response.data));
         navigate("/home");
       } else {
-        setErroLogin("Erro desconhecido.");
-        setShowModal(true);
+        setModal({
+          show: true,
+          type: "error",
+          message: "Erro desconhecido.",
+        });
       }
     } catch (error) {
       const mensagemErro = error?.response?.data?.message || "Erro ao conectar com o servidor.";
-      setErroLogin(mensagemErro);
-      setShowModal(true);
+      setModal({
+        show: true,
+        type: "error",
+        message: mensagemErro,
+      });
     } finally {
       setLoading(false);
     }
@@ -121,16 +127,12 @@ export default function Login() {
             </div>
           </form>
 
-          {/* Modal de erro */}
-          <Styled.CustomModal show={showModal} onHide={() => setShowModal(false)} centered>
-            <Styled.ModalContent>
-              <h5>Erro ao fazer login</h5>
-              <p>{erroLogin}</p>
-              <BsButton variant="danger" onClick={() => setShowModal(false)}>
-                Fechar
-              </BsButton>
-            </Styled.ModalContent>
-          </Styled.CustomModal>
+          <CustomModal
+            show={modal.show}
+            type={modal.type}
+            message={modal.message}
+            onHide={() => setModal({ ...modal, show: false })}
+          />
         </Styled.RightPanel>
       </Styled.Container>
     </Styled.LoginPage >

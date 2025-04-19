@@ -5,6 +5,7 @@ import NotFound from "../pages/NotFound";
 import NotAuthorized from "../pages/NotAuthorized";
 import RegisterUser from "../pages/RegisterUser";
 import ResetPassword from "../pages/ResetPassword";
+import NewPasswordReset from "../pages/NewPasswordReset";
 import Acess from "../pages/orders/Acess";
 import Control from "../pages/dashboards/Control";
 import PrivateRoute from "./PrivateRoute";
@@ -19,6 +20,8 @@ export default function AppRoutes() {
                 <Route path="/register" element={<RegisterUser />} />
                 <Route path="/not-authorized" element={<NotAuthorized />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
+                
+                <Route path="/reset-password/:token" element={<NewPasswordReset />} />
 
                 {/* Rota protegida */}
                 <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
